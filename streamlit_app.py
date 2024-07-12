@@ -66,8 +66,10 @@ def tela_principal():
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: flex-start;  /* Adiciona esta linha para alinhar o conteúdo ao topo */
             height: 8.7cm; /* Altura da tela */
             width: 15.5cm;  /* Largura da tela */
+            padding-top: 10px; /* Adiciona um pouco de espaçamento no topo */
         }
         .content {
             text-align: center;
@@ -227,6 +229,12 @@ def tela_resultados():
     else:
         # Mostrar tabela com resultados filtrados (primeiras 6 linhas)
         col1.dataframe(df_filtrado.head(6), width=700)
+
+
+
+      
+
+
 
         # Calcular indicadores
         pessimo, ruim, regular, bom, otimo, total_votos = calcular_indicadores(df_filtrado)

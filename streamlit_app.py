@@ -64,11 +64,10 @@ def tela_principal():
         <style>
         .content {
             text-align: center;
-            margin-top: 50px; /* Ajuste o valor conforme necessário */
             height: 100vh; /* Altura total da viewport */
             display: flex;
             flex-direction: column;
-            justify-content: flex-start;
+            justify-content: center;
             align-items: center;
         }
         .button-container {

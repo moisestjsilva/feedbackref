@@ -18,19 +18,27 @@ def carregar_dados():
 # Função para salvar votos em arquivo CSV
 def salvar_votos():
     now = datetime.now()
-    data = {
+    
+    # Carregar votos existentes
+    df_existente = carregar_dados()
+
+    # Dados dos novos votos
+    novos_votos = {
         'Opção': [],
         'Votos': [],
         'Data': []
     }
 
     for opcao, votos in st.session_state.votos.items():
-        data['Opção'].append(opcao)
-        data['Votos'].append(votos)
-        data['Data'].append(now.strftime('%Y-%m-%d %H:%M:%S'))
+        novos_votos['Opção'].append(opcao)
+        novos_votos['Votos'].append(votos)
+        novos_votos['Data'].append(now.strftime('%Y-%m-%d %H:%M:%S'))
 
-    df = pd.DataFrame(data)
-    df.to_csv('votos.csv', index=False)
+    df_novos = pd.DataFrame(novos_votos)
+    
+    # Concatenar os dados existentes com os novos e salvar no arquivo
+    df_concatenado = pd.concat([df_existente, df_novos], ignore_index=True)
+    df_concatenado.to_csv('votos.csv', index=False)
 
 # Inicializar contadores de votos se não existirem na sessão
 if 'votos' not in st.session_state:

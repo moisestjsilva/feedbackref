@@ -58,7 +58,6 @@ def votar(opcao):
     st.session_state.timeout = 1
     st.session_state.last_update = st.session_state.timeout
 
-# Função para mostrar a tela principal
 def tela_principal():
     st.markdown("""
         <style>
@@ -66,8 +65,8 @@ def tela_principal():
             display: flex;
             flex-direction: column;
             align-items: center;
-            height: 100vh;
-            width: 100vw;
+            height: 8.7cm; /* Altura da tela */
+            width: 15.5cm;  /* Largura da tela */
         }
         .content {
             text-align: center;
@@ -118,6 +117,46 @@ def tela_principal():
     st.markdown('<div class="main-container">', unsafe_allow_html=True)
     st.title('Como estava o almoço hoje?')
     st.markdown('<div class="content">', unsafe_allow_html=True)
+
+    col1, col2, col3, col4, col5 = st.columns(5)
+
+    with col1:
+        st.image('pessimo.png', width=100)
+        if st.button('Péssimo', key='pessimo_button'):
+            votar('Péssimo')
+
+    with col2:
+        st.image('ruim.png', width=100)
+        if st.button('Ruim', key='ruim_button'):
+            votar('Ruim')
+
+    with col3:
+        st.image('regular.png', width=100)
+        if st.button('Regular', key='regular_button'):
+            votar('Regular')
+
+    with col4:
+        st.image('bom.png', width=100)
+        if st.button('Bom', key='bom_button'):
+            votar('Bom')
+
+    with col5:
+        st.image('otimo.png', width=100)
+        if st.button('Ótimo', key='otimo_button'):
+            votar('Ótimo')
+
+    st.markdown('</div>', unsafe_allow_html=True)
+
+    st.markdown('<br>', unsafe_allow_html=True)
+    st.markdown('<br>', unsafe_allow_html=True)
+    st.markdown('<br>', unsafe_allow_html=True)
+
+    st.markdown('<div style="visibility: hidden;">', unsafe_allow_html=True)
+    if st.button('Relatórios', key='ver_relatorios_hidden'):
+        st.session_state.page = 'resultados'
+    st.markdown('</div>', unsafe_allow_html=True)
+
+    st.markdown('</div>', unsafe_allow_html=True)
 
     # Mostrar as opções de votação e os botões
     col1, col2, col3, col4, col5 = st.columns(5)

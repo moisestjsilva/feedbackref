@@ -49,12 +49,12 @@ def votar(opcao):
     st.session_state.votos[opcao] += 1
     salvar_votos()
 
-    # Mostrar mensagem de sucesso por 2 segundos
+    # Mostrar mensagem de sucesso por 1 segundo
     mensagem = st.empty()
-    mensagem.success(f'Voto registrado com sucesso: {opcao}')
+    mensagem.success(f'Voto registrado: {opcao}')
     st.session_state.last_message = mensagem  # Salvar mensagem para possível limpeza posterior
 
-    # Limpar a mensagem após 2 segundos
+    # Limpar a mensagem após 1 segundos
     st.session_state.timeout = 1
     st.session_state.last_update = st.session_state.timeout
 
@@ -113,7 +113,7 @@ def tela_principal():
         """, unsafe_allow_html=True)
 
     st.markdown('<div class="main-container">', unsafe_allow_html=True)
-    st.title('Sistema de Feedback')
+    st.title('Como estava o almoço hoje?')
     st.markdown('<div class="content">', unsafe_allow_html=True)
 
     # Mostrar as opções de votação e os botões

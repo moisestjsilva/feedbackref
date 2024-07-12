@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import os
 from datetime import datetime
+from calendar import month_name
 import matplotlib.pyplot as plt
 
 # Função para carregar os dados e converter a coluna 'Data' para datetime
@@ -53,7 +54,7 @@ def votar(opcao):
     mensagem.success(f'Voto registrado: {opcao}')
     st.session_state.last_message = mensagem  # Salvar mensagem para possível limpeza posterior
 
-    # Limpar a mensagem após 1 segundo
+    # Limpar a mensagem após 1 segundos
     st.session_state.timeout = 1
     st.session_state.last_update = st.session_state.timeout
 
@@ -65,18 +66,9 @@ def tela_principal():
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            height: 100vh; /* Altura total da viewport */
         }
         .content {
             text-align: center;
-        }
-        .button-container {
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            flex-wrap: wrap;
-            margin-top: 20px;
         }
         .stButton button {
             width: 100px;
@@ -153,6 +145,18 @@ def tela_principal():
             votar('Ótimo')
 
     st.markdown('</div>', unsafe_allow_html=True)
+
+    # Botão para visualizar os resultados
+    st.markdown('<br>', unsafe_allow_html=True)
+    st.markdown('<br>', unsafe_allow_html=True)
+    st.markdown('<br>', unsafe_allow_html=True)
+
+    # Botão invisível para controlar o fluxo da aplicação
+    st.markdown('<div style="visibility: hidden;">', unsafe_allow_html=True)
+    if st.button('Relatórios', key='ver_relatorios_hidden'):
+        st.session_state.page = 'resultados'
+    st.markdown('</div>', unsafe_allow_html=True)
+
     st.markdown('</div>', unsafe_allow_html=True)
 
 # Função para filtrar os resultados por mês

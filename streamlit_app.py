@@ -71,6 +71,14 @@ def tela_principal():
             justify-content: flex-start;
             align-items: center;
         }
+        .button-container {
+            width: 100%;
+            display: flex;
+            justify-content: space-around;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
         .stButton button {
             width: 100px;
             height: 40px;
@@ -117,31 +125,16 @@ def tela_principal():
     st.markdown('<div class="content">', unsafe_allow_html=True)
 
     # Mostrar as opções de votação e os botões
-    col1, col2, col3, col4, col5 = st.columns(5)
-
-    with col1:
-        st.image('pessimo.png', width=100)
-        if st.button('Péssimo', key='pessimo_button'):
+    with st.markdown('<div class="button-container">', unsafe_allow_html=True):
+        if st.button('Péssimo'):
             votar('Péssimo')
-
-    with col2:
-        st.image('ruim.png', width=100)
-        if st.button('Ruim', key='ruim_button'):
+        if st.button('Ruim'):
             votar('Ruim')
-
-    with col3:
-        st.image('regular.png', width=100)
-        if st.button('Regular', key='regular_button'):
+        if st.button('Regular'):
             votar('Regular')
-
-    with col4:
-        st.image('bom.png', width=100)
-        if st.button('Bom', key='bom_button'):
+        if st.button('Bom'):
             votar('Bom')
-
-    with col5:
-        st.image('otimo.png', width=100)
-        if st.button('Ótimo', key='otimo_button'):
+        if st.button('Ótimo'):
             votar('Ótimo')
 
     st.markdown('</div>', unsafe_allow_html=True)

@@ -66,9 +66,12 @@ def tela_principal():
             display: flex;
             flex-direction: column;
             align-items: center;
+            height: 100vh;
+            width: 100vw;
         }
         .content {
             text-align: center;
+            width: 100%;
         }
         .stButton button {
             width: 100px;

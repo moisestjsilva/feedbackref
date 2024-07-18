@@ -2,7 +2,6 @@ import streamlit as st
 import pandas as pd
 import os
 from datetime import datetime
-from calendar import month_name
 import matplotlib.pyplot as plt
 
 # Função para carregar os dados e converter a coluna 'Data' para datetime
@@ -44,19 +43,26 @@ def salvar_votos():
 if 'votos' not in st.session_state:
     st.session_state.votos = {'Péssimo': 0, 'Ruim': 0, 'Regular': 0, 'Bom': 0, 'Ótimo': 0}
 
+# Inicializar controle de última votação se não existir na sessão
+if 'ultima_votacao' not in st.session_state:
+    st.session_state.ultima_votacao = None
+
 # Função para atualizar votos
 def votar(opcao):
-    st.session_state.votos[opcao] += 1
-    salvar_votos()
+    # Verificar se a última votação foi para a mesma opção, se sim, não incrementar
+    if st.session_state.ultima_votacao != opcao:
+        st.session_state.votos[opcao] += 1
+        st.session_state.ultima_votacao = opcao
+        salvar_votos()
 
-    # Mostrar mensagem de sucesso por 1 segundo
-    mensagem = st.empty()
-    mensagem.success(f'Voto registrado: {opcao}')
-    st.session_state.last_message = mensagem  # Salvar mensagem para possível limpeza posterior
+        # Mostrar mensagem de sucesso por 1 segundo
+        mensagem = st.empty()
+        mensagem.success(f'Voto registrado: {opcao}')
+        st.session_state.last_message = mensagem  # Salvar mensagem para possível limpeza posterior
 
-    # Limpar a mensagem após 1 segundos
-    st.session_state.timeout = 1
-    st.session_state.last_update = st.session_state.timeout
+        # Limpar a mensagem após 1 segundo
+        st.session_state.timeout = 1
+        st.session_state.last_update = st.session_state.timeout
 
 # Função para mostrar a tela principal
 def tela_principal():

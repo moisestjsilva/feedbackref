@@ -11,58 +11,29 @@ def carregar_dados():
         df['Data'] = pd.to_datetime(df['Data'])  # Converter coluna 'Data' para datetime
     else:
         df = pd.DataFrame(columns=['Opção', 'Votos', 'Data'])
-    
     return df
 
 # Função para salvar votos em arquivo CSV
-def salvar_votos():
-    now = datetime.now()
-    
-    # Carregar votos existentes
+def salvar_votos(nova_votacao):
     df_existente = carregar_dados()
-
-    # Dados dos novos votos
-    novos_votos = {
-        'Opção': [],
-        'Votos': [],
-        'Data': []
-    }
-
-    for opcao, votos in st.session_state.votos.items():
-        novos_votos['Opção'].append(opcao)
-        novos_votos['Votos'].append(votos)
-        novos_votos['Data'].append(now.strftime('%Y-%m-%d %H:%M:%S'))
-
-    df_novos = pd.DataFrame(novos_votos)
-    
-    # Concatenar os dados existentes com os novos e salvar no arquivo
-    df_concatenado = pd.concat([df_existente, df_novos], ignore_index=True)
+    df_novo = pd.DataFrame([nova_votacao])
+    df_concatenado = pd.concat([df_existente, df_novo], ignore_index=True)
     df_concatenado.to_csv('votos.csv', index=False)
 
-# Inicializar contadores de votos se não existirem na sessão
+# Inicializar contadores de votos e última votação se não existirem na sessão
 if 'votos' not in st.session_state:
     st.session_state.votos = {'Péssimo': 0, 'Ruim': 0, 'Regular': 0, 'Bom': 0, 'Ótimo': 0}
-
-# Inicializar controle de última votação se não existir na sessão
 if 'ultima_votacao' not in st.session_state:
     st.session_state.ultima_votacao = None
 
 # Função para atualizar votos
 def votar(opcao):
-    # Verificar se a última votação foi para a mesma opção, se sim, não incrementar
-    if st.session_state.ultima_votacao != opcao:
-        st.session_state.votos[opcao] += 1
-        st.session_state.ultima_votacao = opcao
-        salvar_votos()
-
-        # Mostrar mensagem de sucesso por 1 segundo
-        mensagem = st.empty()
-        mensagem.success(f'Voto registrado: {opcao}')
-        st.session_state.last_message = mensagem  # Salvar mensagem para possível limpeza posterior
-
-        # Limpar a mensagem após 1 segundo
-        st.session_state.timeout = 1
-        st.session_state.last_update = st.session_state.timeout
+    agora = datetime.now()
+    nova_votacao = {'Opção': opcao, 'Votos': 1, 'Data': agora.strftime('%Y-%m-%d %H:%M:%S')}
+    salvar_votos(nova_votacao)
+    st.session_state.ultima_votacao = agora
+    st.session_state.votos[opcao] += 1
+    st.success(f'Voto registrado: {opcao}')
 
 # Função para mostrar a tela principal
 def tela_principal():
@@ -167,14 +138,14 @@ def tela_principal():
 
 # Função para filtrar os resultados por mês
 def filtrar_por_mes(df, mes):
-    if mes == 'Todos':  # Se selecionar 'Todos'
+    if mes == 'Todos':
         return df
     else:
         return df[df['Data'].dt.month == mes]
 
 # Função para filtrar os resultados por dia
 def filtrar_por_dia(df, dia):
-    if dia == 'Todos':  # Se selecionar 'Todos'
+    if dia == 'Todos':
         return df
     else:
         return df[df['Data'].dt.strftime('%d/%m/%Y') == dia]
@@ -239,11 +210,11 @@ def tela_resultados():
         sizes = [pessimo, ruim, regular, bom, otimo]
         labels = ['Péssimo', 'Ruim', 'Regular', 'Bom', 'Ótimo']
         colors = ['red', 'brown', 'yellow', 'lightgreen', 'darkgreen']
-        explode = (0.1, 0, 0, 0, 0)  # explode 1st slice (Péssimo)
+        explode = (0.1, 0, 0, 0, 0)
 
         fig1, ax1 = plt.subplots(figsize=(4, 3))
         ax1.pie(sizes, explode=explode, labels=labels, colors=colors, autopct='%1.1f%%', shadow=True, startangle=140)
-        ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
+        ax1.axis('equal')
         col2.pyplot(fig1)
 
         # Gráfico de barras com quantidade de votos

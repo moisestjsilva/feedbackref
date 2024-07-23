@@ -175,14 +175,8 @@ def tela_resultados():
     # Carregar dados do arquivo votos.csv
     df = carregar_dados()
 
-    # Layout em duas colunas para resultados
-    col1, col2 = st.columns([2, 1])
-
-    # Botão para voltar para tela principal
-    st.markdown('<div style="text-align: center;">', unsafe_allow_html=True)
-    if st.button('Voltar para Votação', key='voltar_votacao_button'):
-        st.session_state.page = 'principal'
-    st.markdown('</div>', unsafe_allow_html=True)
+    # Layout em duas colunas para filtros
+    col1, col2 = st.columns(2)
 
     # Filtro por mês
     meses = ['Todos'] + list(range(1, 13))
@@ -192,21 +186,21 @@ def tela_resultados():
 
     # Filtro por dia
     dias = ['Todos'] + df_filtrado_mes['Data'].dt.strftime('%d/%m/%Y').unique().tolist() if not df_filtrado_mes.empty else ['Todos']
-    dia_selecionado = col1.selectbox('Filtrar por dia:', dias)
+    dia_selecionado = col2.selectbox('Filtrar por dia:', dias)
 
     df_filtrado = filtrar_por_dia(df_filtrado_mes, dia_selecionado)
+
+    # Layout em duas colunas para gráficos
+    col3, col4 = st.columns(2)
 
     if df_filtrado.empty:
         st.write('Nenhum dado disponível para os filtros selecionados.')
     else:
-        # Mostrar tabela com resultados filtrados (primeiras 6 linhas)
-        col1.dataframe(df_filtrado.head(6), width=700)
-
         # Calcular indicadores
         pessimo, ruim, regular, bom, otimo, total_votos = calcular_indicadores(df_filtrado)
-
+        
         # Gráfico de pizza com percentual de votos
-        col2.write('### Percentual de Votos por Opção')
+        col3.write('### Percentual de Votos por Opção')
         sizes = [pessimo, ruim, regular, bom, otimo]
         labels = ['Péssimo', 'Ruim', 'Regular', 'Bom', 'Ótimo']
         colors = ['red', 'brown', 'yellow', 'lightgreen', 'darkgreen']
@@ -215,31 +209,48 @@ def tela_resultados():
         fig1, ax1 = plt.subplots(figsize=(4, 3))
         ax1.pie(sizes, explode=explode, labels=labels, colors=colors, autopct='%1.1f%%', shadow=True, startangle=140)
         ax1.axis('equal')
-        col2.pyplot(fig1)
+        col3.pyplot(fig1)
 
         # Gráfico de barras com quantidade de votos
-        col2.write('### Quantidade de Votos do Mês')
+        col4.write('### Quantidade de Votos do Mês')
         fig2, ax2 = plt.subplots()
         ax2.bar(['Péssimo', 'Ruim', 'Regular', 'Bom', 'Ótimo'], [pessimo, ruim, regular, bom, otimo], color=['red', 'brown', 'yellow', 'lightgreen', 'darkgreen'])
         for i, v in enumerate([pessimo, ruim, regular, bom, otimo]):
-            ax2.text(i, v + 0.1, str(v), ha='center', va='bottom')
-        col2.pyplot(fig2)
+            ax2.text(i, v + 0.1, str(v), ha='center')
+        col4.pyplot(fig2)
+
+        # Layout em duas colunas para resumo dos votos e tabela
+        col5, col6 = st.columns([2, 1])
+
+        # Mostrar tabela com resultados filtrados (primeiras 6 linhas)
+        col5.dataframe(df_filtrado.head(999), width=700)
 
         # Mostrar quantidade total de votos
-        st.markdown('<br>', unsafe_allow_html=True)
-        st.write(f'### Total de Votos: {total_votos}')
-        
-        # Resumo dos votos
-        st.write('### Resumo dos Votos')
-        for opcao, quantidade in zip(['Péssimo', 'Ruim', 'Regular', 'Bom', 'Ótimo'], [pessimo, ruim, regular, bom, otimo]):
-            percentual = (quantidade / total_votos) * 100 if total_votos > 0 else 0
-            st.write(f'{opcao}: {quantidade} votos ({percentual:.2f}%)')
+        col6.write(f'### Total de Votos: {total_votos}')
 
-# Controlar fluxo da aplicação
-if 'page' not in st.session_state:
-    st.session_state.page = 'principal'
+        # Mostrar indicadores
+        col6.write('### Indicadores de Votos')
+        col6.write(f'- Péssimo: {pessimo}')
+        col6.write(f'- Ruim: {ruim}')
+        col6.write(f'- Regular: {regular}')
+        col6.write(f'- Bom: {bom}')
+        col6.write(f'- Ótimo: {otimo}')
 
-if st.session_state.page == 'principal':
-    tela_principal()
-elif st.session_state.page == 'resultados':
-    tela_resultados()
+    # Botão para voltar para tela principal
+    st.markdown('<div style="text-align: center;">', unsafe_allow_html=True)
+    if st.button('Voltar para Votação', key='voltar_votacao_button'):
+        st.session_state.page = 'principal'
+    st.markdown('</div>', unsafe_allow_html=True)
+
+# Função principal para controle da navegação entre telas
+def main():
+    if 'page' not in st.session_state:
+        st.session_state.page = 'principal'
+    
+    if st.session_state.page == 'principal':
+        tela_principal()
+    elif st.session_state.page == 'resultados':
+        tela_resultados()
+
+if __name__ == "__main__":
+    main()
